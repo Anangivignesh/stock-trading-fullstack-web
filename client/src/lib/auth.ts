@@ -69,9 +69,9 @@ export async function login(email: string, password: string): Promise<SessionUse
   }
 }
 
-export async function register(username: string, email: string, password: string): Promise<SessionUser> {
+export async function register(username: string, email: string, password: string, role?: string): Promise<SessionUser> {
   try {
-    const response = await axiosInstance.post('/users/register', { username, email, password });
+    const response = await axiosInstance.post('/users/register', { username, email, password, role });
     const data = response.data;
     const sessionUser: SessionUser = {
       id: data._id,

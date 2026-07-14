@@ -4,6 +4,7 @@ import { LineChart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { register } from "@/lib/auth";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/register")({
 function RegisterPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
+  const [isAdmin, setIsAdmin] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [k]: e.target.value });
@@ -30,7 +32,7 @@ function RegisterPage() {
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setLoading(true);
-    register(form.name, form.email, form.password)
+    register(form.name, form.email, form.password, isAdmin ? "admin" : "user")
       .then(() => {
         toast.success("Account created — welcome!");
         navigate({ to: "/dashboard" });
@@ -74,6 +76,12 @@ function RegisterPage() {
                   <Input id="confirm" type="password" value={form.confirm} onChange={set("confirm")} />
                   {errors.confirm && <p className="text-xs text-danger">{errors.confirm}</p>}
                 </div>
+              </div>
+              <div className="flex items-center space-x-2 py-1">
+                <Checkbox id="admin" checked={isAdmin} onCheckedChange={(checked) => setIsAdmin(!!checked)} />
+                <Label htmlFor="admin" className="text-sm font-medium leading-none cursor-pointer">
+                  Register as system administrator
+                </Label>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
